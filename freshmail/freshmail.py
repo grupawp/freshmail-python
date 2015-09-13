@@ -98,7 +98,7 @@ class FreshMail(object):
         access_path = PREFIX + url
         full_url = HOST + access_path
         sign_str = self.api_key + access_path + _data + self.api_secret
-        api_sign = sha1(sign_str).hexdigest()
+        api_sign = sha1(sign_str.encode('utf-8')).hexdigest()
         headers = {
             'Content-Type': 'application/json',
             'X-Rest-ApiKey': self.api_key,
