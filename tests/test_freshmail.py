@@ -39,3 +39,5 @@ def test_ping_no_auth():
     except FreshMailException:
         pass
 
+
+# vim: ts=4:sw=4:et:fdm=indent:ff=unix

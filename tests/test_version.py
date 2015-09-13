@@ -17,3 +17,5 @@ import freshmail
 def test_version():
     assert freshmail.__version__
 
+
+# vim: ts=4:sw=4:et:fdm=indent:ff=unix
