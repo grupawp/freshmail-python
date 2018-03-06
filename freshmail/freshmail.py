@@ -24,9 +24,10 @@ except ImportError:
 HOST = 'https://api.freshmail.com'
 PREFIX = '/rest/'
 
+SUB_STATUS_ACTIVE = 1
 SUB_STATUS_NOT_ACTIVATED = 3
 SUB_STATUS = {
-    1: 'active',
+    SUB_STATUS_ACTIVE: 'active',
     2: 'activation pending',
     SUB_STATUS_NOT_ACTIVATED: 'not activated',
     4: 'resigned',
@@ -161,6 +162,20 @@ class FreshMail(object):
         return self.request(url, payload)
 
 
+    def subscribers_add(self, list_hash, subscribers_lst, state, confirm):
+        '''Adds multiple subscribers to the list
+        '''
+        payload = {
+            'list': list_hash,
+            'subscribers': subscribers_lst,
+            'state': state,
+            'confirm': confirm,
+        }
+
+        url = 'subscriber/addMultiple'
+        return self.request(url, payload)
+
+
     def subscriber_get(self, email, list_hash):
         '''Gets a subscriber from the list
         '''
@@ -178,6 +193,13 @@ class FreshMail(object):
 
         url = 'subscriber/delete'
         return self.request(url, payload)
+
+
+    def subscribers_list_fields(self, list_hash):
+        '''Gets subscription list fields
+        '''
+        url = 'subscribers_list/getFields'
+        return self.request(url, {'hash': list_hash})
 
 
     def subscribers_lists(self):
