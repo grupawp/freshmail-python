@@ -110,8 +110,9 @@ class FreshMail(object):
         elif method == 'GET':
             res = self.request_sess.get(full_url, data=_data, headers=headers)
         else:
-            raise FreshMailException({'message': 'GET or POST required' \
-                ' methods. Got {}'.format(method)})
+            raise FreshMailException({
+                'message': 'GET or POST required methods. Got {}'.format(
+                    method)})
 
         self.http_code = res.status_code
         self.raw_response = res.content
