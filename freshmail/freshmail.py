@@ -11,6 +11,7 @@ from __future__ import (
     with_statement,
 )
 
+from copy import deepcopy
 from hashlib import sha1
 
 import requests
@@ -104,12 +105,12 @@ class FreshMail(object):
             'X-Rest-ApiKey': self.api_key,
             'X-Rest-ApiSign': api_sign,
         }
-        if method is 'POST':
+        if method == 'POST':
             res = self.request_sess.post(full_url, data=_data, headers=headers)
-        elif method is 'GET':
+        elif method == 'GET':
             res = self.request_sess.get(full_url, data=_data, headers=headers)
         else:
-            raise FreshMailException({'message': 'GET or POST required'
+            raise FreshMailException({'message': 'GET or POST required' \
                 ' methods. Got {}'.format(method)})
 
         self.http_code = res.status_code
@@ -192,7 +193,7 @@ class FreshMail(object):
         '''Finds subscriber at given lists
             NOTE: slow with large number of lists
         '''
-        if not len(lists):
+        if not lists:
             raise FreshMailException({'message': 'No lists found'})
         subscribed_lists = []
         for one_list in lists:
@@ -233,6 +234,35 @@ class FreshMail(object):
 
         url = 'subscribers_list/addField'
         return self.request(url, payload, method='POST')
+
+
+    def transactional_mail(self, email, subject, extra_dc=None):
+        '''Sends transactional email
+        '''
+        payload = {
+            'subscriber': email,
+            'subject': subject,
+        }
+        payload.update(extra_dc or {})
+
+        url = 'mail'
+        return self.request(url, payload)
+
+
+    def mail_text(self, email, subject, text, extra_dc=None):
+        '''Sends transactional plain text email
+        '''
+        extra_dc = deepcopy(extra_dc or {})
+        extra_dc['text'] = text
+        return self.transactional_mail(email, subject, extra_dc)
+
+
+    def mail_html(self, email, subject, html, extra_dc=None):
+        '''Sends transactional HTML email
+        '''
+        extra_dc = deepcopy(extra_dc or {})
+        extra_dc['html'] = html
+        return self.transactional_mail(email, subject, extra_dc)
 
 
 class FreshMailException(Exception):
