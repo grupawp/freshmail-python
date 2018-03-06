@@ -35,7 +35,7 @@ def test_ping_no_auth():
     fm_obj = FreshMail('any_key', 'any_secret')
     res = fm_obj.ping()
     assert isinstance(res, dict)
-    assert res.get('status') == 'error'
+    assert res.get('status') == 'errors'
 
 
 
