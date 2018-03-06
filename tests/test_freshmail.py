@@ -33,11 +33,10 @@ def test_bad_method():
 
 def test_ping_no_auth():
     fm_obj = FreshMail('any_key', 'any_secret')
-    try:
-        fm_obj.ping()
-        assert False
-    except FreshMailException:
-        pass
+    res = fm_obj.ping()
+    assert isinstance(res, dict)
+    assert res.get('status') == 'error'
+
 
 
 # vim: ts=4:sw=4:et:fdm=indent:ff=unix
