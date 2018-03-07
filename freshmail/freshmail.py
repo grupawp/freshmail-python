@@ -136,7 +136,7 @@ class FreshMail(object):
         if not self.raw_response:
             raise FreshMailException({
                 'message': 'no_content',
-                'status': self.http_code,
+                'http_code': self.http_code,
                 'code': -1})
 
         try:
@@ -144,7 +144,7 @@ class FreshMail(object):
         except ValueError:
             raise FreshMailException({
                 'message': repr(self.raw_response),
-                'status': self.http_code,
+                'http_code': self.http_code,
                 'code': -1})
 
         self.errors = self.response.get('errors')
