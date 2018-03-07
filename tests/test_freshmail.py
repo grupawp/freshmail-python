@@ -12,7 +12,6 @@ from __future__ import (
 )
 
 from freshmail.freshmail import FreshMail, FreshMailException
-from json.decoder import JSONDecodeError
 
 
 def test_init():
@@ -37,7 +36,7 @@ def test_ping_no_auth():
     try:
         res = fm_obj.ping()
         assert False
-    except JSONDecodeError:
+    except ValueError:
         pass
 
 
