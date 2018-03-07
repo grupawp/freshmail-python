@@ -36,7 +36,7 @@ def test_ping_no_auth():
     try:
         res = fm_obj.ping()
         assert False
-    except ValueError:
+    except FreshMailException:
         pass
 
 

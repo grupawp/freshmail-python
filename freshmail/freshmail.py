@@ -126,11 +126,26 @@ class FreshMail(object):
                 full_url, data=_data, headers=headers, timeout=timeout,
                 proxies=self.proxies)
         except requests.exceptions.RequestException as exc:
-            raise FreshMailException({'message': repr(exc), 'code': -1})
+            raise FreshMailException({
+                'message': repr(exc),
+                'url': full_url,
+                'code': -1})
 
         self.http_code = res.status_code
         self.raw_response = res.content
-        self.response = dict(res.json())
+        if not self.raw_response:
+            raise FreshMailException({
+                'message': 'no_content',
+                'status': self.http_code,
+                'code': -1})
+
+        try:
+            self.response = dict(res.json())
+        except ValueError:
+            raise FreshMailException({
+                'message': repr(self.raw_response),
+                'status': self.http_code,
+                'code': -1})
 
         self.errors = self.response.get('errors')
         if self.http_code != 200 and self.response.get('status') == 'ERROR':
