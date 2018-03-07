@@ -27,11 +27,12 @@ PREFIX = '/rest/'
 
 SUB_STATUS_ACTIVE = 1
 SUB_STATUS_NOT_ACTIVATED = 3
+SUB_STATUS_RESIGNED = 4
 SUB_STATUS = {
     SUB_STATUS_ACTIVE: 'active',
     2: 'activation pending',
     SUB_STATUS_NOT_ACTIVATED: 'not activated',
-    4: 'resigned',
+    SUB_STATUS_RESIGNED: 'resigned',
     5: 'soft bouncing',
     8: 'hard bouncing',
 }
@@ -45,7 +46,7 @@ class FreshMail(object):
         Sends JSON requests to the FreshMail's API end-points
     '''
 
-    def __init__(self, api_key, api_secret):
+    def __init__(self, api_key, api_secret, proxies=None):
         '''Initiates communication object
         '''
         #: API's key (32 chars)
@@ -62,6 +63,8 @@ class FreshMail(object):
         self.http_code = 200
         #: request session object
         self.request_sess = requests.Session()
+        # HTTP/HTTPS/... proxies
+        self.proxies = proxies
 
 
     def get_raw_response(self):
@@ -118,7 +121,12 @@ class FreshMail(object):
                 'message': 'GET or POST required methods. Got {}'.format(
                     method)})
 
-        res = fn_obj(full_url, data=_data, headers=headers, timeout=timeout)
+        try:
+            res = fn_obj(
+                full_url, data=_data, headers=headers, timeout=timeout,
+                proxies=self.proxies)
+        except requests.exceptions.RequestException as exc:
+            raise FreshMailException({'message': repr(exc), 'code': -1})
 
         self.http_code = res.status_code
         self.raw_response = res.content
