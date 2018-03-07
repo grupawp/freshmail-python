@@ -129,6 +129,7 @@ class FreshMail(object):
 
         if raw_response:
             return self.raw_response
+
         return self.response
 
 
@@ -159,6 +160,27 @@ class FreshMail(object):
             payload['custom_fields'] = custom_fields
 
         url = 'subscriber/add'
+        return self.request(url, payload)
+
+
+    def subscriber_edit(self, list_hash, subscriber_params, custom_fields=None):
+        '''Edits a subscriber
+        '''
+        payload = {
+            'email': subscriber_params['email'],
+            'list': list_hash,
+            'state': subscriber_params.get('state', SUB_STATUS_NOT_ACTIVATED),
+        }
+
+        if custom_fields is not None:
+            # custom_fields needs to be a dict
+            if not isinstance(custom_fields, dict):
+                raise FreshMailException({
+                    'message': 'Custom fields must be a dict. Got {}'.format(
+                        custom_fields)})
+            payload['custom_fields'] = custom_fields
+
+        url = 'subscriber/edit'
         return self.request(url, payload)
 
 

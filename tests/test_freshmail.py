@@ -12,6 +12,7 @@ from __future__ import (
 )
 
 from freshmail.freshmail import FreshMail, FreshMailException
+from json.decoder import JSONDecodeError
 
 
 def test_init():
@@ -33,10 +34,11 @@ def test_bad_method():
 
 def test_ping_no_auth():
     fm_obj = FreshMail('any_key', 'any_secret')
-    res = fm_obj.ping()
-    assert isinstance(res, dict)
-    assert res.get('status') == 'errors'
-
+    try:
+        res = fm_obj.ping()
+        assert False
+    except JSONDecodeError:
+        pass
 
 
 # vim: ts=4:sw=4:et:fdm=indent:ff=unix
