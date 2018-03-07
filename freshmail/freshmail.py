@@ -12,6 +12,7 @@ from __future__ import (
 )
 
 from copy import deepcopy
+from functools import partial
 from hashlib import sha1
 
 import requests
@@ -87,7 +88,9 @@ class FreshMail(object):
         return self.http_code
 
 
-    def request(self, url, payload=None, raw_response=False, method='POST'):
+    def request(
+            self, url, payload=None, raw_response=False, method='POST',
+            timeout=3.0):
         '''Makes request to REST API. Adds payload data for POST request.
         :param url: API's controller[/action[/param1[/param2...]]]
         :param payload: POST data dict
@@ -107,13 +110,15 @@ class FreshMail(object):
             'X-Rest-ApiSign': api_sign,
         }
         if method == 'POST':
-            res = self.request_sess.post(full_url, data=_data, headers=headers)
+            fn_obj = partial(self.request_sess.post)
         elif method == 'GET':
-            res = self.request_sess.get(full_url, data=_data, headers=headers)
+            fn_obj = partial(self.request_sess.get)
         else:
             raise FreshMailException({
                 'message': 'GET or POST required methods. Got {}'.format(
                     method)})
+
+        res = fn_obj(full_url, data=_data, headers=headers, timeout=timeout)
 
         self.http_code = res.status_code
         self.raw_response = res.content
