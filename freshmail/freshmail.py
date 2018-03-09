@@ -46,7 +46,7 @@ class FreshMail(object):
         Sends JSON requests to the FreshMail's API end-points
     '''
 
-    def __init__(self, api_key, api_secret, proxies=None):
+    def __init__(self, api_key, api_secret, proxies=None, timeout=3.0):
         '''Initiates communication object
         '''
         #: API's key (32 chars)
@@ -65,6 +65,8 @@ class FreshMail(object):
         self.request_sess = requests.Session()
         # HTTP/HTTPS/... proxies
         self.proxies = proxies
+        # request(s) timeout
+        self.timeout = timeout
 
 
     def get_raw_response(self):
@@ -92,8 +94,7 @@ class FreshMail(object):
 
 
     def request(
-            self, url, payload=None, raw_response=False, method='POST',
-            timeout=3.0):
+            self, url, payload=None, raw_response=False, method='POST'):
         '''Makes request to REST API. Adds payload data for POST request.
         :param url: API's controller[/action[/param1[/param2...]]]
         :param payload: POST data dict
@@ -123,7 +124,7 @@ class FreshMail(object):
 
         try:
             res = fn_obj(
-                full_url, data=_data, headers=headers, timeout=timeout,
+                full_url, data=_data, headers=headers, timeout=self.timeout,
                 proxies=self.proxies)
         except requests.exceptions.RequestException as exc:
             raise FreshMailException({
