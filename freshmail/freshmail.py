@@ -227,6 +227,21 @@ class FreshMail(object):
         return self.request(url, payload)
 
 
+    def subscribers_edit(self, list_hash, subscribers_lst, state=None):
+        '''Edits multiple subscribers in the list
+        '''
+        payload = {
+            'list': list_hash,
+            'subscribers': subscribers_lst,
+        }
+
+        if state is not None:
+            payload['state'] = state
+
+        url = 'subscriber/editMultiple'
+        return self.request(url, payload)
+
+
     def subscriber_get(self, email, list_hash):
         '''Gets a subscriber from the list
         '''
